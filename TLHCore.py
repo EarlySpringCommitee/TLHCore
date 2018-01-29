@@ -1,7 +1,7 @@
 import requests
 from pyquery import PyQuery as pq
 import pandas as pd
-import math
+isnan = lambda x:x!=x
 
 def get(account=None, password=None, mode='s'):
     if not(account and password):
@@ -29,16 +29,13 @@ def get(account=None, password=None, mode='s'):
         subjects = [i for i in score_datas[0][2:18]]
         sum_titles = [i for i in sum_datas[0][1:-1]]
         for i in range(1,11):
-            parsed_scores = [i for i in score_datas[i]][2:18]
+            parsed_scores = [i if not isnan(i) else '' for i in score_datas[i] ][2:18]
             exam = score_datas[i][1]
-            try:
-                if math.isnan(exam):
-                    continue
-            except TypeError:
-                pass
-            score[exam] = dict(zip(subjects, [[i]+[float('nan'),float('nan'),float('nan')] for i in parsed_scores]))
+            if isnan(exam):
+                continue
+            score[exam] = dict(zip(subjects, [[i]+['','',''] for i in parsed_scores]))
         for i in range(1,8):
-            sum_data = sum_datas[i][:-1]
+            sum_data = [i if not isnan(i) else '' for i in sum_datas[i][:-1]]
             if not sum_data[0] in score:
                 continue
             score[sum_data[0]].update(dict(zip(sum_titles, sum_data[1:])))
