@@ -33,7 +33,7 @@ def get(account=None, password=None, mode='s'):
             exam = score_datas[i][1]
             if isnan(exam):
                 continue
-            score[exam] = dict(zip(subjects, [[i]+['','',''] for i in parsed_scores]))
+            score[exam] = dict(zip(subjects, [[i]+['','','',''] for i in parsed_scores]))
         for i in range(1,8):
             sum_data = [i if not isnan(i) else '' for i in sum_datas[i][:-1]]
             if not sum_data[0] in score:
@@ -42,7 +42,7 @@ def get(account=None, password=None, mode='s'):
         print(score)
         """
         資料格式: {'第1次平時成績':
-                    {'◎ 國文Ⅴ':[ 成績 , 平均 , 排名 , 排名人數],
+                    {'◎ 國文Ⅴ':[ 成績 , 平均 , 排名 , 類組排, 校排],
                     '◎ 英文Ⅴ': ['78', nan, nan, nan],
                     ....,
                     '總分': nan....},
