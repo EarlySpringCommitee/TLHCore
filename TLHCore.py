@@ -2,8 +2,9 @@ import requests
 from pyquery import PyQuery as pq
 import pandas as pd
 isnan = lambda x:x!=x
+valid = lambda x:x if not isnan(x) else ''
 
-def get(account=None, password=None, mode='s'):
+def get(account=None, password=None, mode='i'):
     if not(account and password):
         raise ValueError('Account or password Error!')
     s = requests.Session()
@@ -43,13 +44,23 @@ def get(account=None, password=None, mode='s'):
         """
         資料格式: {'第1次平時成績':
                     {'◎ 國文Ⅴ':[ 成績 , 平均 , 排名 , 類組排, 校排],
-                    '◎ 英文Ⅴ': ['78', nan, nan, nan],
+                    '◎ 英文Ⅴ': ['78', '', '', '',''],
                     ....,
-                    '總分': nan....},
+                    '總分': ''....},
                 ....}
         }}
         """
         return score
+    
+    def get_info():
+        get_infos = s.get('http://register.tlhc.ylc.edu.tw/hcode/STDINFO.asp')
+        get_infos.encoding = 'big5'
+        infos = pd.read_html(get_infos.text)[1]
+        infos = {
+            'studentId': valid(infos[1][1]),
+            'name': valid(infos[3][1]),
+        }
+        print(infos)
 
     mode_selector = {
         's': get_score, # 學期成績
@@ -63,7 +74,8 @@ def get(account=None, password=None, mode='s'):
         'p': None, # 學期獎懲
         'P': None, # 歷年獎懲
         'n': None, # 學期缺曠
-        "N": None # 歷年缺曠
+        "N": None, # 歷年缺曠
+        'i': get_info
     }
     data = {}
     for i in mode:
