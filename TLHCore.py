@@ -60,7 +60,7 @@ def get(account=None, password=None, mode='i'):
             'studentId': valid(infos[1][1]),
             'name': valid(infos[3][1]),
         }
-        print(infos)
+        return infos
 
     mode_selector = {
         's': get_score, # 學期成績
